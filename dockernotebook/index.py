@@ -17,13 +17,17 @@ def hello():
 def create():
     repo = request.args.get("repo")
     repoDir = request.args.get("repoDir")
+    containerImage = request.args.get("containerImage")
     if repo:
         env = {"GIT_REPO": repo}
     else:
         env = {}
     if repoDir:
         env["REPO_DIR"] = repoDir
-    container = client.create_container("226ceaf95c3c", ports=[8080], environment=env)
+    if not containerImage:
+        containerImage = "226ceaf95c3c"
+
+    container = client.create_container(containerImage, ports=[8080], environment=env)
     containerId = container['Id']
     client.start(containerId, publish_all_ports=True)
     port = client.port(containerId, 8080)[0]["HostPort"]

@@ -56,14 +56,14 @@
     </div>
 
     <h2>Start from a public notebook on GitHub</h2>
-    <form class="navbar-form">
+    <form class="navbar-form" action="/create" method="GET">
       <div class="input-group">
-	<label for="repo">Docker Repository</label>
-	<input type="text" class="form-control" placeholder="crosbymichael/python" name="repo"><br />
 	<label for="repo">Public Notebook GitHub Repo</label>
-	<input type="text" class="form-control" placeholder="unpingco/Python-for-Signal-Processing"><br />
+	<input type="text" name="repo" class="form-control" placeholder="unpingco/Python-for-Signal-Processing"><br />
+	<label for="dockerRepo">Docker Repository (optional)</label>
+	<input type="text" class="form-control" placeholder="crosbymichael/python" name="dockerRepo"><br />
       </div>
-      <input type="button" class="btn btn-primary launch-button" value="Launch" />
+      <input type="submit" class="btn btn-primary launch-button" value="Launch" />
     </form>
     <h2>Find us on <a href="https://github.com/rissem/dockernotebook">GitHub</a></h2>
   </body>
