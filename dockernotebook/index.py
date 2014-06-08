@@ -1,5 +1,7 @@
-from flask import Flask, redirect, request
+from flask import Flask, redirect, request, Response, stream_with_context
 import docker
+import requests
+import time
 
 client = docker.Client(base_url='unix:///var/run/docker.sock',
                   version='1.9',
@@ -12,6 +14,16 @@ app = Flask(__name__)
 @app.route("/")
 def hello():
     return app.send_static_file('index.html')
+
+# it would be nice to proxy; unfortunately iPython notebook has some absolute URLS
+# if that were fixed and this proxy worked completely, the create endpoint could
+# redirect intead of just sending a link
+@app.route("/container")
+def container():
+    containerId = request.args.get("id")
+    port = client.port(containerId, 8080)[0]["HostPort"]
+    req = requests.get("http://dockernotebook.com:" + port, stream = True)
+    return Response(stream_with_context(req.iter_content()), content_type = req.headers['content-type'])
 
 @app.route("/create")
 def create():
@@ -31,6 +43,17 @@ def create():
     containerId = container['Id']
     client.start(containerId, publish_all_ports=True)
     port = client.port(containerId, 8080)[0]["HostPort"]
+    
+    #try to hit port, once we do return this URL to user
+    serverStarted = False
+    while not serverStarted:
+        time.sleep(1)
+        try:
+            req = requests.get('http://dockernotebook.com:' + port)
+            if req.status_code == 200:
+                serverStarted = True
+        except Exception as e:
+            print("CONNECTION ERROR", e)
     return ("<a href='http://dockernotebook.com:" + port + "/'>Your Notebook</a>")
 
 if __name__ == "__main__":
