@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, redirect
 import docker
 
 client = docker.Client(base_url='unix:///var/run/docker.sock',
@@ -20,7 +20,7 @@ def create():
     containerId = container['Id']
     client.start(containerId, publish_all_ports=True)
     port = client.port(containerId, 8080)[0]["HostPort"]
-    return port
+    return ("<a href='http://dockernotebook.com:" + port + "/'>Your Notebook</a>")
 
 if __name__ == "__main__":
     app.debug = True
