@@ -1,4 +1,4 @@
-from flask import Flask, redirect
+from flask import Flask, redirect, request
 import docker
 
 client = docker.Client(base_url='unix:///var/run/docker.sock',
@@ -6,7 +6,6 @@ client = docker.Client(base_url='unix:///var/run/docker.sock',
                   timeout=10)
 
 #print client.info()
-container = client.create_container("unfairbanks/docker-ipython-notebook", ports=[8080])
 
 app = Flask(__name__)
 
@@ -16,7 +15,15 @@ def hello():
 
 @app.route("/create")
 def create():
-    container = client.create_container("unfairbanks/docker-ipython-notebook", ports=[8080])
+    repo = request.args.get("repo")
+    repoDir = request.args.get("repoDir")
+    if repo:
+        env = {"GIT_REPO": repo}
+    else:
+        env = {}
+    if repoDir:
+        env["REPO_DIR"] = repoDir
+    container = client.create_container("226ceaf95c3c", ports=[8080], environment=env)
     containerId = container['Id']
     client.start(containerId, publish_all_ports=True)
     port = client.port(containerId, 8080)[0]["HostPort"]
