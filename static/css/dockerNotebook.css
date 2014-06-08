@@ -23,3 +23,11 @@ img {
 .input-group {
     width: 800px;
 }
+
+.share-url {
+    width: 400px;
+}
+
+.launch-button {
+    margin-top: 10px;
+}
