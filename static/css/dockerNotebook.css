@@ -1,3 +1,25 @@
 h1 {
-    padding-left: 50px;
+    padding-left: 10px;
+}
+
+h2 {
+    padding-left: 10px;
+}
+
+img {
+    margin: 10px;
+}
+
+.shareText {
+    display:inline;
+    margin: 10px;
+}
+
+.thumbnails {
+    padding: 10px;
+    border: 1px solid gray;
+}
+
+.input-group {
+    width: 800px;
 }
